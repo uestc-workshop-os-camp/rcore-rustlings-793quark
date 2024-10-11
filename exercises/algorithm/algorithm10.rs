@@ -2,7 +2,7 @@
 	graph
 	This problem requires you to implement a basic graph functio
 */
-// I AM NOT DONE
+// 1I AM NOT DONE
 
 use std::collections::{HashMap, HashSet};
 use std::fmt;
@@ -30,6 +30,28 @@ impl Graph for UndirectedGraph {
     }
     fn add_edge(&mut self, edge: (&str, &str, i32)) {
         //TODO
+        let en = self.adjacency_table.entry(edge.0.to_string()).or_insert(vec![(edge.1.to_string(),edge.2)]);
+        en.push((edge.1.to_string(),edge.2));
+        let en = self.adjacency_table.entry(edge.1.to_string()).or_insert(vec![(edge.0.to_string(),edge.2)]);
+        en.push((edge.0.to_string(),edge.2));
+        // match self.adjacency_table.entry(edge.0.to_string()).or_insert(){
+        //     Some(vec) => {
+        //         vec.to_owned().push((edge.1.to_string(),edge.2));
+        //     },
+        //     None => {
+        //         let vv:Vec<(String, i32)> = vec![(edge.1.to_string(),edge.2)];
+        //         self.adjacency_table.insert(edge.0.to_string(), vv);
+        //     }
+        // }
+        // match self.adjacency_table.get(edge.1){
+        //     Some(vec) => {
+        //         vec.to_owned().push((edge.0.to_string(),edge.2));
+        //     },
+        //     None => {
+        //         let vv:Vec<(String, i32)> = vec![(edge.0.to_string(),edge.2)];
+        //         self.adjacency_table.insert(edge.1.to_string(), vv);
+        //     }
+        // }
     }
 }
 pub trait Graph {
@@ -77,7 +99,11 @@ mod test_undirected_graph {
             (&String::from("b"), &String::from("c"), 10),
             (&String::from("c"), &String::from("b"), 10),
         ];
+        let mut cnt = 1;
         for edge in expected_edges.iter() {
+            println!("{}",cnt);
+            cnt+=1;
+            println!("{:?}",graph.edges());
             assert_eq!(graph.edges().contains(edge), true);
         }
     }

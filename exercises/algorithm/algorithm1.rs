@@ -2,19 +2,19 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
+// 1I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
 use std::vec::*;
-
+use std::clone::Clone;
 #[derive(Debug)]
-struct Node<T> {
+struct Node<T:Clone+ std::cmp::PartialOrd> {
     val: T,
     next: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Node<T> {
+impl<T:Clone+ std::cmp::PartialOrd> Node<T> {
     fn new(t: T) -> Node<T> {
         Node {
             val: t,
@@ -23,19 +23,19 @@ impl<T> Node<T> {
     }
 }
 #[derive(Debug)]
-struct LinkedList<T> {
+struct LinkedList<T:Clone+ std::cmp::PartialOrd> {
     length: u32,
     start: Option<NonNull<Node<T>>>,
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
+impl<T:Clone+ std::cmp::PartialOrd> Default for LinkedList<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T> LinkedList<T> {
+impl<T:Clone+ std::cmp::PartialOrd> LinkedList<T> {
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -69,20 +69,58 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+	pub fn merge(mut list_a: LinkedList<T>,mut list_b:LinkedList<T>) -> Self
 	{
 		//TODO
-		Self {
+		let mut list_new = Self {
             length: 0,
             start: None,
             end: None,
+        };
+        list_new.length = list_a.length + list_b.length;
+        let mut i: i32 = 0;
+        let mut j: i32 = 0;
+        for _ in 0..list_new.length{
+            let ele_a;
+            let ele_b;
+            if let Some(p) = list_a.get(i) {
+                ele_a = Some(p.clone());
+            }else{
+                ele_a = None;
+            }
+            if let Some(p) = list_b.get(j) {
+                ele_b = Some(p.clone());
+            }else{
+                ele_b = None;
+            }
+            match (ele_a, ele_b) {
+                (Some(a), Some(b)) => {
+                    if a <= b {
+                        list_new.add(a);
+                        i += 1; 
+                    } else {
+                        list_new.add(b);
+                        j += 1;
+                    }
+                }
+                (Some(a), None) => {
+                    list_new.add(a);
+                    i += 1;
+                }
+                (None, Some(b)) => {
+                    list_new.add(b);
+                    j += 1;
+                }
+                _ => ()
+            }
         }
+        list_new
 	}
 }
 
 impl<T> Display for LinkedList<T>
 where
-    T: Display,
+    T: Display+Clone+ std::cmp::PartialOrd,
 {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         match self.start {
@@ -94,7 +132,7 @@ where
 
 impl<T> Display for Node<T>
 where
-    T: Display,
+    T: Display+Clone+ std::cmp::PartialOrd,
 {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         match self.next {

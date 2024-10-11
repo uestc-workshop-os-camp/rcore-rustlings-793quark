@@ -12,6 +12,6 @@ rust-project.json
 *.iml
 *.o
 public/
-
+rcore-rustlings-793quark.code-workspace
 # Local Netlify folder
 .netlify
